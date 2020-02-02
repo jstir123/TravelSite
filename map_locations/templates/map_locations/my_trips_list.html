@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div id="map"></div>
+
+    <div class="content-container">
+
+      <div class="label">
+
+        <div class="prof-pic-div">
+        {% if request.user.profile_pic %}
+          <a href="{% url 'accounts:update_prof_pic' pk=request.user.profile_pic.pk %}">
+        {% else %}
+          <a href="{% url 'accounts:add_prof_pic' %}">
+        {% endif %}
+          <img id="prof-pic" class="d-inline" src="{{ request.user.profile_pic.prof_pic.url }}" alt="None"></a>
+        </div>
+
+        <div class="prof-content-block">
+
+          <h2 class="">{{request.user.get_full_name}}</h2>
+
+          <div class="prof-info">
+            <div class="d-inline-block mr-1 ml-2" style="padding-right: 10px; border-right: 1px solid;">
+              <p class="mb-1"><b>Trips</b></p>
+              <p>{{trips_list|length}}</p>
+            </div>
+
+            <a href="{% url 'followers:follower_list' username=request.user.username %}" style="color: black;">
+              <div class="d-inline-block mr-1" style="padding-right: 10px; border-right: 1px solid;">
+                <p class="mb-1"><b>Followers</b></p>
+                <p>{{follower_count}}</p>
+              </div>
+            </a>
+
+            <a href="{% url 'followers:following_list' username=request.user.username %}" style="color: black;">
+              <div class="d-inline-block mr-1">
+                <p class="mb-1"><b>Following</b></p>
+                <p>{{following_count}}</p>
+              </div>
+            </a>
+            </div>
+
+            <a id="add-trip" href="{% url 'map_locations:trip_new' %}"><h6>+ Add Trip</h6></a>
+
+          </div>
+
+      </div>
+
+      <div class="trip-content">
+        {% if request.user.is_authenticated %}
+      		{% for trip in trips_list %}
+            <div class="jumbotron trip-jumbo">
+              <ul class="list-unstyled">
+                <li><a href="{% url 'map_locations:trip_detail' pk=trip.pk %}"><h3>{{trip}}</h3></a></li>
+                <li><h6>Start: {{trip.start_date}}</h6></li>
+                <li><h6>End: {{trip.end_date}}</h6></li>
+                <li><p><b>Trip Description:</b> {{trip.description}}</p></li>
+              </ul>
+              <div class="edit-remove">
+                <ul class="list-inline">
+                  <li class="list-inline-item"><a href="{% url 'map_locations:trip_edit' pk=trip.pk %}">Edit</a></li>
+                  <li class="list-inline-item"><a href="{% url 'map_locations:trip_delete' pk=trip.pk %}">Remove</a></li>
+                </ul>
+              </div>
+            </div>
+      	  {% endfor %}
+      	{% endif %}
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+      function initMap() {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 39.8283, lng: -98.5795},
+          zoom: 4
+        });
+
+        {% for trip in trips_list %}
+          var marker = new google.maps.Marker({
+            position: {lat: {{trip.latitude}}, lng: {{trip.longitude}}},
+            map: map,
+            icon: "{% static 'images/map-icon.png' %}"
+          });
+
+          var infowindow = new google.maps.InfoWindow({
+            content: '<h3>{{trip.city}}, {{trip.country}}</h3><br><h6>{{trip.start_date}}<br>{{trip.end_date}}</h6><br><p>{{trip.description}}</p>'
+          });
+        {% endfor %}
+      }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap"></script>
+    <script type="text/javascript">
+      function activePage() {
+        var element = document.getElementById("mytrips");
+        element.className += " active";
+      }
+      activePage()
+    </script>
+{% endblock %}

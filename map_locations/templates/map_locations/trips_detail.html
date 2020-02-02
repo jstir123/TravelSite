@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{trips}}</h1>
+  <h6>Start: {{trips.start_date}}</h6>
+  <h6>End: {{trips.end_date}}</h6>
+  <p><b>Trip Description: </b>{{trips.description}}</p>
+  {% if request.user == trips.traveler %}
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="{% url 'map_locations:trip_edit' pk=trips.pk %}">Edit</a></li>
+      <li class="list-inline-item"><a href="{% url 'map_locations:trip_delete' pk=trips.pk %}">Remove</a></li>
+    </ul>
+    <a href="{% url 'map_locations:add_image' pk=trips.pk %}">+Add Photos</a>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div id="map"></div>
+
+    <div class="content-container">
+      <div class="label">
+        <h1 class="d-inline">{{trip_user.first_name}}'s Trips</h1>
+
+        <div class="d-inline-block mr-1 ml-2" style="padding-right: 10px; border-right: 1px solid;">
+          <p class="mb-1"><b>Trips</b></p>
+          <p>{{trips_list|length}}</p>
+        </div>
+
+        <a href="{% url 'followers:follower_list' username=trip_user.username %}" style="color: black;">
+          <div class="d-inline-block mr-1" style="padding-right: 10px; border-right: 1px solid;">
+            <p class="mb-1"><b>Followers</b></p>
+            <p>{{follower_count}}</p>
+          </div>
+        </a>
+
+        <a href="{% url 'followers:following_list' username=trip_user.username %}" style="color: black;">
+          <div class="d-inline-block mr-1">
+            <p class="mb-1"><b>Following</b></p>
+            <p>{{following_count}}</p>
+          </div>
+        </a>
+
+        <div>
+          {% if trip_user.id in following_list %}
+            <a class="follow-link" href="{% url 'followers:unfollow' username=trip_user.username %}">
+              Unfollow
+            </a>
+          {% else %}
+            <a class="follow-link" href="{% url 'followers:follow' username=trip_user.username %}">
+              Follow
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <div class="trip-content">
+        {% if request.user.is_authenticated %}
+      		{% for trip in trips_list %}
+            <div class="jumbotron trip-jumbo">
+              <ul class="list-unstyled">
+                <li><a href="{% url 'map_locations:trip_detail' pk=trip.pk %}"><h3>{{trip}}</h3></a></li>
+                <li><h6>Start: {{trip.start_date}}</h6></li>
+                <li><h6>End: {{trip.end_date}}</h6></li>
+                <li><p><b>Trip Description:</b> {{trip.description}}</p></li>
+              </ul>
+            </div>
+      	  {% endfor %}
+      	{% endif %}
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function initMap() {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 39.8283, lng: -98.5795},
+          zoom: 4
+        });
+
+        {% for trip in trips_list %}
+          var marker = new google.maps.Marker({
+            position: {lat: {{trip.latitude}}, lng: {{trip.longitude}}},
+            map: map,
+            icon: "{% static 'images/map-icon.png' %}"
+          });
+
+          var infowindow = new google.maps.InfoWindow({
+            content: '<h3>{{trip.city}}, {{trip.country}}</h3><br><h6>{{trip.start_date}}<br>{{trip.end_date}}</h6><br><p>{{trip.description}}</p>'
+          });
+        {% endfor %}
+      }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap"></script>
+
+    {% include 'follow_js.html' %}
+
+{% endblock %}

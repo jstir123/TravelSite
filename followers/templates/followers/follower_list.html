@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="label">
+    <h1>{{trip_user.get_full_name}}</h1>
+    <h3>{{trip_user.username}}</h3>
+    <h6>{{following_list|length}} Followers</h6>
+  </div>
+
+  <div class="user-content">
+    {% if request.user.is_authenticated %}
+      {% for user in following_list %}
+        <div class="jumbotron user-jumbo">
+          <ul class="list-unstyled">
+            {% if user.following_user == request.user %}
+              <li><a href="{% url 'map_locations:mytrips' %}"><h3>{{user.following_user.get_full_name}}</h3></a></li>
+              <li><a href="{% url 'map_locations:mytrips' %}">{{user.following_user.username}}</a></li>
+            {% else %}
+              <li><a href="{% url 'map_locations:trip_list' username=user.following_user.username %}">
+                <h3>{{user.following_user.get_full_name}}</h3></a>
+              </li>
+              <li><a href="{% url 'map_locations:trip_list' username=user.following_user.username %}">
+                {{user.following_user.username}}</a>
+              </li>
+            {% endif %}
+          </ul>
+          <ul class="list-inline">
+            <li class="list-inline-item">
+            {% if user.following_user.id in follow_list %}
+              <a class="follow-link" href="{% url 'followers:unfollow' username=user.following_user.username %}">Unfollow</a>
+            {% else %}
+              <a class="follow-link" href="{% url 'followers:follow' username=user.following_user.username %}">Follow</a>
+            {% endif %}
+            </li>
+          </ul>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  {% include 'follow_js.html' %}
+
+{% endblock %}

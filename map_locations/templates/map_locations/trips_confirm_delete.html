@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{trips}}</h1>
+  <h6>Start: {{trips.start_date}}</h6>
+  <h6>End: {{trips.end_date}}</h6>
+  <p><b>Trip Description: </b>{{trips.description}}</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <p>Are you sure you want to delete this trip?</p>
+    <input type="submit" class="btn btn-danger" value="Confirm">
+    <a class="btn btn-primary" href="{% url 'map_locations:trip_detail' pk=trips.pk %}">Cancel</a>
+  </form>
+{% endblock %}

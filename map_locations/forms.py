@@ -1,0 +1,47 @@
+from django import forms
+from map_locations.models import Trips, TripImages
+
+class TripForm(forms.ModelForm):
+
+    class Meta():
+        model = Trips
+        fields = ('city','state','country','start_date','end_date','description')
+        STATE_CHOICES = (
+        ('',''),
+        ('AK', 'Alaska'),('AL', 'Alabama'),('AR', 'Arkansas'),('AS', 'American Samoa'),
+        ('AZ', 'Arizona'),('CA', 'California'),('CO', 'Colorado'),('CT', 'Connecticut'),
+        ('DC', 'District of Columbia'),('DE', 'Delaware'),('FL', 'Florida'),
+        ('GA', 'Georgia'),('GU', 'Guam'),('HI', 'Hawaii'),('IA', 'Iowa'),('ID', 'Idaho'),
+        ('IL', 'Illinois'),('IN', 'Indiana'),('KS', 'Kansas'),('KY', 'Kentucky'),
+        ('LA', 'Louisiana'),('MA', 'Massachusetts'),('MD', 'Maryland'),('ME', 'Maine'),
+        ('MI', 'Michigan'),('MN', 'Minnesota'),('MO', 'Missouri'),
+        ('MP', 'Northern Mariana Islands'),('MS', 'Mississippi'),('MT', 'Montana'),
+        ('NA', 'National'),('NC', 'North Carolina'),('ND', 'North Dakota'),
+        ('NE', 'Nebraska'),('NH', 'New Hampshire'),('NJ', 'New Jersey'),
+        ('NM', 'New Mexico'),('NV', 'Nevada'),('NY', 'New York'),('OH', 'Ohio'),
+        ('OK', 'Oklahoma'),('OR', 'Oregon'),('PA', 'Pennsylvania'),('PR', 'Puerto Rico'),
+        ('RI', 'Rhode Island'),('SC', 'South Carolina'),('SD', 'South Dakota'),
+        ('TN', 'Tennessee'),('TX', 'Texas'),('UT', 'Utah'),('VA', 'Virginia'),
+        ('VI', 'Virgin Islands'),('VT', 'Vermont'),('WA', 'Washington'),
+        ('WI', 'Wisconsin'),('WV', 'West Virginia'),('WY', 'Wyoming'))
+
+        widgets = {
+            'state': forms.Select(choices=STATE_CHOICES,attrs={'class': 'form-control'}),
+        }
+
+class UpdateTripForm(forms.ModelForm):
+
+    class Meta():
+        model = Trips
+        fields = ('start_date','end_date','description')
+
+
+class TripImageForm(forms.ModelForm):
+
+    class Meta():
+        model = TripImages
+        fields = ('image',)
+
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={'multiple': True}),
+        }

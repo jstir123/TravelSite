@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="label">
+  <h1>My Feed</h1>
+</div>
+
+<div id="loc_filter" class="filter">
+  <form method="get">
+    <label for="loc_q">Filter by Location:</label>
+    <select id="id_loc_q" class="form-control" name="loc_q" size="1">
+      <option id="All" value="All">All</option>
+      {% for loc in loc_filter_list %}
+          <option id="{{loc}}" value="{{loc}}">{{loc}}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" name="button" onclick="this.form.submit()">Apply</button>
+  </form>
+</div>
+
+<div class="trip-content">
+  {% if request.user.is_authenticated %}
+    {% for trip in trips_list %}
+      <div class="jumbotron trip-jumbo">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'map_locations:trip_list' username=trip.traveler %}"><h3>{{trip.traveler.get_full_name}}</h3></a></li>
+          <li><a href="{% url 'map_locations:trip_detail' pk=trip.pk %}"><h5>{{trip}}</h5></a></li>
+          <li><h6>Start: {{trip.start_date}}</h6></li>
+          <li><h6>End: {{trip.end_date}}</h6></li>
+          <li><p><b>Trip Description:</b> {{trip.description}}</p></li>
+        </ul>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<script type="text/javascript">
+  function activePage() {
+    var element = document.getElementById("home");
+    element.className += " active";
+  }
+
+  function selectedLocFilter() {
+    var element = document.getElementById("{{selected_loc_filter}}");
+    element.selected = "selected";
+  }
+
+  activePage()
+  selectedLocFilter()
+</script>
+
+{% endblock %}

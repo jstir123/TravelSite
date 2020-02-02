@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<h1>New Trip</h1>
+<div class="container">
+  <form class="trip-form" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+      <button type="submit" class="save btn btn-primary">Add Trip</button>
+    {% endbuttons %}
+  </form>
+</div>
+{% endblock %}
